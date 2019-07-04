@@ -34,3 +34,7 @@ examplehttpoperatorhttpsensorcheck-ea787dd2163243a78dfba96d81f47e0d   1/1       
 examplehttpoperatorpostop-3637d44e1b8a42789c59d2c6a66bec6a            0/1       ContainerCreating   0          0s
 postgres-airflow-b4844754f-b8d8k                                      1/1       Running             0          36m
 ```
+
+# References
+
+[Tutorial](https://kubernetes.io/blog/2018/06/28/airflow-on-kubernetes-part-1-a-different-kind-of-operator/)
