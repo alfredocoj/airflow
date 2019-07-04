@@ -155,17 +155,17 @@ kubectl apply -f $BUILD_DIRNAME/airflow.yaml
 
 dump_logs() {
   echo "------- pod description -------"
-  kubectl describe pod $POD
+  kubectl -n airflow describe pod $POD
   echo "------- webserver init container logs - init -------"
-  kubectl logs $POD -c init || true
+  kubectl -n airflow logs $POD -c init || true
   if [ "${GIT_SYNC}" = 1 ]; then
       echo "------- webserver init container logs - git-sync-clone -------"
-      kubectl logs $POD -c git-sync-clone || true
+      kubectl -n airflow logs $POD -c git-sync-clone || true
   fi
   echo "------- webserver logs -------"
-  kubectl logs $POD -c webserver || true
+  kubectl -n airflow logs $POD -c webserver || true
   echo "------- scheduler logs -------"
-  kubectl logs $POD -c scheduler || true
+  kubectl -n airflow logs $POD -c scheduler || true
   echo "--------------"
 }
 
@@ -176,7 +176,7 @@ PODS_ARE_READY=0
 for i in {1..150}
 do
   echo "------- Running kubectl get pods -------"
-  PODS=$(kubectl get pods | awk 'NR>1 {print $0}')
+  PODS=$(kubectl -n airflow get pods | awk 'NR>1 {print $0}')
   echo "$PODS"
   NUM_AIRFLOW_READY=$(echo $PODS | grep airflow | awk '{print $2}' | grep -E '([0-9])\/(\1)' | wc -l | xargs)
   NUM_POSTGRES_READY=$(echo $PODS | grep postgres | awk '{print $2}' | grep -E '([0-9])\/(\1)' | wc -l | xargs)
@@ -186,7 +186,7 @@ do
   fi
   sleep 4
 done
-POD=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep airflow | head -1)
+POD=$(kubectl -n airflow get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep airflow | head -1)
 
 if [[ "$PODS_ARE_READY" == 1 ]]; then
   echo "PODS are ready."
@@ -197,23 +197,23 @@ else
 fi
 
 # Wait until Airflow webserver is up
-MINIKUBE_IP=$(minikube ip)
-AIRFLOW_WEBSERVER_IS_READY=0
-CONSECUTIVE_SUCCESS_CALLS=0
-for i in {1..30}
-do
-  HTTP_CODE=$(curl -LI http://${MINIKUBE_IP}:30809/health -o /dev/null -w '%{http_code}\n' -sS) || true
-  if [[ "$HTTP_CODE" == 200 ]]; then
-    let "CONSECUTIVE_SUCCESS_CALLS+=1"
-  else
-    CONSECUTIVE_SUCCESS_CALLS=0
-  fi
-  if [[ "$CONSECUTIVE_SUCCESS_CALLS" == 3 ]]; then
-    AIRFLOW_WEBSERVER_IS_READY=1
-    break
-  fi
-  sleep 10
-done
+#MINIKUBE_IP=$(minikube ip)
+#AIRFLOW_WEBSERVER_IS_READY=0
+#CONSECUTIVE_SUCCESS_CALLS=0
+#for i in {1..30}
+#do
+#  HTTP_CODE=$(curl -LI http://${MINIKUBE_IP}:30809/health -o /dev/null -w '%{http_code}\n' -sS) || true
+#  if [[ "$HTTP_CODE" == 200 ]]; then
+#    let "CONSECUTIVE_SUCCESS_CALLS+=1"
+#  else
+#    CONSECUTIVE_SUCCESS_CALLS=0
+#  fi
+#  if [[ "$CONSECUTIVE_SUCCESS_CALLS" == 3 ]]; then
+#    AIRFLOW_WEBSERVER_IS_READY=1
+#    break
+#  fi
+#  sleep 10
+#done
 
 if [[ "$AIRFLOW_WEBSERVER_IS_READY" == 1 ]]; then
   echo "Airflow webserver is ready."

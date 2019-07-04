@@ -21,6 +21,7 @@ kind: PersistentVolume
 apiVersion: v1
 metadata:
   name: airflow-dags
+  namespace: airflow
 spec:
   accessModes:
     - ReadOnlyMany
@@ -33,6 +34,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: airflow-dags
+  namespace: airflow
 spec:
   accessModes:
     - ReadOnlyMany
@@ -44,6 +46,7 @@ kind: PersistentVolume
 apiVersion: v1
 metadata:
   name: airflow-logs
+  namespace: airflow
 spec:
   accessModes:
     - ReadOnlyMany
@@ -56,6 +59,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: airflow-logs
+  namespace: airflow
 spec:
   accessModes:
     - ReadOnlyMany
@@ -67,6 +71,7 @@ kind: PersistentVolume
 apiVersion: v1
 metadata:
   name: test-volume
+  namespace: airflow
 spec:
   accessModes:
     - ReadWriteOnce
@@ -79,6 +84,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: test-volume
+  namespace: airflow
 spec:
   accessModes:
     - ReadWriteOnce
